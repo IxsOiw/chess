@@ -1,0 +1,16 @@
+build/
+*.o
+*.exe
+chess  
+
+.env
+
+*.swp
+*.swo
+*~
+.netrwhist
+.nvimlog
+
+.DS_Store
+.AppleDouble
+.LSOverride
