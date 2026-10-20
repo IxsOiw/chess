@@ -1,0 +1,12 @@
+
+// peace position
+for(int i = 0; i < 8; i++)
+{
+    for(int j = 0; j < 8; j++)
+    {
+        if(i < 2)
+            DrawCircle(PeacePositionX[i][j], PeacePositionY[i][j], 25, BLACK);
+        if ( i > 5)
+            DrawCircle(PeacePositionX[i][j], PeacePositionY[i][j], 25, WHITE);
+    }
+}
