@@ -15,11 +15,19 @@ extern int postionX[8][8];
 extern int postionY[8][8];
 extern int PeacePositionX[8][8];
 extern int PeacePositionY[8][8];
+extern int board[8][8];
 extern int quen_P;
+
 
 void createBoardCoardination(int (*postionX)[8], int (*postionY)[8], int (*countPostion)[8], int *startBoardX, int *startBoardY, int *cout, int *rectangle_X, int *rectangle_Y);
 
 void createPeasePosition(int (*postionX)[8], int (*postionY)[8], int (*PeacePosition)[8], int (*PeacePositionX)[8], int (*PeacePositionY)[8], int *rectangle_X);
+
+void drawBoardPieces( int board[8][8],
+    Texture2D pawn_b, Texture2D rook_b, Texture2D knight_b, Texture2D bishop_b, Texture2D queen_b, Texture2D king_b,
+    Texture2D pawn_w, Texture2D rook_w, Texture2D knight_w, Texture2D bishop_w, Texture2D queen_w, Texture2D king_w,
+    int PeacePositionX[8][8], int PeacePositionY[8][8]
+);
 
 int quenSolved(int row, int quen[], int n, int PeacePositionX[8][8], int PeacePositionY[8][8], int postionX[8][8], int postionY[8][8], int rectangle_X);
 

@@ -5,6 +5,17 @@
 
 #include "raylib.h"
 
+int board[8][8] = {
+    {-2, -3, -4, -5, -6, -4, -3, -2}, // 0: Čierne ťažké figúrky
+    {-1, -1, -1, -1, -1, -1, -1, -1}, // 1: Čierni pešiaci
+    { 0,  0,  0,  0,  0,  0,  0,  0},
+    { 0,  0,  0,  0,  0,  0,  0,  0},
+    { 0,  0,  0,  0,  0,  0,  0,  0},
+    { 0,  0,  0,  0,  0,  0,  0,  0},
+    { 1,  1,  1,  1,  1,  1,  1,  1}, // 6: Bieli pešiaci
+    { 2,  3,  4,  5,  6,  4,  3,  2}  // 7: Biele ťažké figúrky
+};
+
 void createBoardCoardination(int (*postionX)[8], int (*postionY)[8], int (*countPostion)[8], int *startBoardX, int *startBoardY, int *cout, int *rectangle_X, int *rectangle_Y)
 {
     int currentX = *startBoardX;
@@ -39,6 +50,44 @@ void createPeasePosition(int (*postionX)[8], int (*postionY)[8], int (*PeacePosi
     }
 }
 
+void drawBoardPieces(int board[8][8],
+    Texture2D pawn_b, Texture2D rook_b, Texture2D knight_b, Texture2D bishop_b, Texture2D queen_b, Texture2D king_b,
+    Texture2D pawn_w, Texture2D rook_w, Texture2D knight_w, Texture2D bishop_w, Texture2D queen_w, Texture2D king_w,
+    int PeacePositionX[8][8], int PeacePositionY[8][8])
+{
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            int piece = board[i][j];
+            if (piece == 0) continue; 
+            Texture2D tex;
+            
+            switch(piece) {
+                case -1: tex = pawn_b; break;
+                case -2: tex = rook_b; break;
+                case -3: tex = knight_b; break;
+                case -4: tex = bishop_b; break;
+                case -5: tex = queen_b; break;
+                case -6: tex = king_b; break;
+                
+                case 1: tex = pawn_w; break;
+                case 2: tex = rook_w; break;
+                case 3: tex = knight_w; break;
+                case 4: tex = bishop_w; break;
+                case 5: tex = queen_w; break;
+                case 6: tex = king_w; break;
+            }
+
+            int drawX = PeacePositionX[i][j] - (tex.width / 2);
+            int drawY = PeacePositionY[i][j] - (tex.height / 2);
+
+            DrawTexture(tex, drawX, drawY, WHITE);
+        }
+    }
+}
+
+
 int isSafe(int row, int col, int quen[])
 {
     for (int i = 0; i < row; i++)
@@ -65,37 +114,31 @@ int quenSolved(int row, int quen[], int n, int PeacePositionX[8][8], int PeacePo
     {
         if (isSafe(row, col, quen))
         {
-            quen[row] = col; // Položíme kráľovnú
+            quen[row] = col;
 
-            // --- VIZUALIZÁCIA (KROK VPRED) ---
             BeginDrawing();
             ClearBackground(RAYWHITE);
             
-            // 1. Nakresli šachovnicu
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     DrawRectangle(postionX[i][j], postionY[i][j], rectangle_X, rectangle_X, ((i + j) % 2 == 0) ? BLUE : GREEN);
                 }
             }
-            // 2. Nakresli aktuálne kráľovné
             for (int i = 0; i < 8; i++) {
                 if (quen[i] != -1) {
                     DrawCircle(PeacePositionX[i][quen[i]], PeacePositionY[i][quen[i]], 30, RED);
                 }
             }
             EndDrawing();
-            WaitTime(0.15); // Pauza pre efekt krokvoania
+            WaitTime(0.15); 
 
-            // Rekurzívny posun
             if (quenSolved(row + 1, quen, n, PeacePositionX, PeacePositionY, postionX, postionY, rectangle_X) == 1)
             {
                 return 1;
             }
 
-            // --- BACKTRACKING (KROK SPÄŤ) ---
-            quen[row] = -1; // Odoberieme kráľovnú
+            quen[row] = -1; 
 
-            // --- VIZUALIZÁCIA (ZMAZANIE KRÁĽOVNE PRI BACKTRACKINGU) ---
             BeginDrawing();
             ClearBackground(RAYWHITE);
             for (int i = 0; i < 8; i++) {
@@ -115,3 +158,4 @@ int quenSolved(int row, int quen[], int n, int PeacePositionX[8][8], int PeacePo
 
     return 0;
 }
+
