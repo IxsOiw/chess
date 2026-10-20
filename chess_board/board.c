@@ -89,21 +89,25 @@ void drawBoardPieces(int board[8][8],
 
 int isValidMove(int board[8][8], int startR, int startC, int targetR, int targetC)
 {
-    
-    int piece = board[startR][startC];
+    if (startR == targetR && startC == targetC) return 0;
+    if (startR == targetR && startC == targetC) return 0;
+    if (board[targetR][targetC] * board[startR][startC] > 0) return 0;
+    if (board[targetR][targetC] == 6 || board[targetR][targetC] == -6) return 0;
+
+    int rawPiece = board[startR][startC];
 
     int stepR = (targetR > startR) ? 1 : ((targetR < startR) ? -1 : 0);
     int stepC = (targetC > startC) ? 1 : ((targetC < startC) ? -1 : 0);
 
-    int pieceType = abs(piece); 
+    int pieceType = abs(rawPiece); 
 
     switch (pieceType)
     {
         case 1:
         {
 
-            int startRowPawn = (piece > 0) ? 6 : 1; 
-            int direction = (piece > 0) ? -1 : 1; 
+            int startRowPawn = (rawPiece > 0) ? 6 : 1; 
+            int direction = (rawPiece > 0) ? -1 : 1; 
 
             if (startC == targetC && targetR == startR + direction && board[targetR][targetC] == 0)
             {
@@ -129,18 +133,25 @@ int isValidMove(int board[8][8], int startR, int startC, int targetR, int target
             {
                 int r = startR + stepR;
                 int c = startC + stepC;
+
                 while(r != targetR || c != targetC)
+                {
                     if(board[r][c] != 0)
                     {
                       return 0;
                     }
-                    else
-                    {
-                        r += stepR;
-                        c += stepC;
-                    }
+                    r += stepR;
+                    c += stepC;
+                }
+
+                if (board[targetR][targetC] * board[startR][startC] > 0)
+                {
+                    return 0;
+                }
+
                 return 1;
             }
+            return 0;
             break;
 
         case 3:             
@@ -148,7 +159,8 @@ int isValidMove(int board[8][8], int startR, int startC, int targetR, int target
             {
                 return 1;
 
-            };
+            }
+            return 0;
             break;
 
         case 4:
@@ -194,6 +206,8 @@ int isValidMove(int board[8][8], int startR, int startC, int targetR, int target
         case 6: 
             if (abs(targetR - startR) <= 1 && abs(targetC - startC) <= 1) return 1;
             break;
+        default:
+            return 0;
     }
     return 0;
 }
@@ -254,6 +268,7 @@ int isSafe(int row, int col, int quen[])
 
     return 1;
 }
+
 int evaluateBoard(int board[8][8])
 {
     int board_value = 0;
@@ -365,8 +380,15 @@ int minimax(int board[8][8], int depth, int isMaxi)
                                     for (int c = 0; c < 8; c++)
                                         tempBoard[r][c] = board[r][c];
 
+                                if (board[targetR][targetC] == 6 || board[targetR][targetC] == -6)
+                                {
+                                    return 0; 
+                                }
+
                                 tempBoard[targetR][targetC] = tempBoard[startR][startC];
                                 tempBoard[startR][startC] = 0;
+                                checkPromotion(tempBoard, targetR, targetC);
+
 
                                 if (!isCheck(tempBoard, turn)) {
                                     int eval = minimax(tempBoard, depth - 1, 0); 
@@ -400,6 +422,7 @@ int minimax(int board[8][8], int depth, int isMaxi)
 
                                 tempBoard[targetR][targetC] = tempBoard[startR][startC];
                                 tempBoard[startR][startC] = 0;
+                                checkPromotion(tempBoard, targetR, targetC);
 
                                 if (!isCheck(tempBoard, turn)) {
                                     int eval = minimax(tempBoard, depth - 1, 1);
@@ -418,9 +441,10 @@ int minimax(int board[8][8], int depth, int isMaxi)
 
 void getBestMove(int board[8][8], int turn)
 {
-    int maxDepth = 1;
+    int tieCount = 0;
+    int maxDepth = 2;
 
-    int bestScore = 10000;
+    int bestScore = (turn == 1) ? -100000 : 100000;
     int bestStartR = -1;
     int bestStartC = -1;
     int bestTargetR = -1;
@@ -453,19 +477,31 @@ void getBestMove(int board[8][8], int turn)
                             tempBoard[startR][startC] = 0;
                             checkPromotion(tempBoard, targetR, targetC);
                             
-                            printf("tempBoard: [%d,%d] -> [%d,%d]... ", startR, startC, targetR, targetC);
-
                             if (!isCheck(tempBoard, turn))
                             {
-                                int score = minimax(tempBoard, maxDepth - 1, 0);
+                                int nextIsMaxi = (turn == 1) ? 0 : 1;
+                                int score = minimax(tempBoard, maxDepth - 1, nextIsMaxi);
 
-                                if (score < bestScore)
+                                int better = (turn == 1) ? (score > bestScore) : (score < bestScore);
+                                int equal  = (score == bestScore);
+
+
+                                if (better)
                                 {
                                     bestScore = score;
                                     bestStartR = startR;
                                     bestStartC = startC;
                                     bestTargetR = targetR;
                                     bestTargetC = targetC;
+                                }
+                                else if (equal)
+                                {
+                                    tieCount++;
+                                    if (rand() % tieCount == 0)   // reservoir sampling
+                                    {
+                                        bestStartR = startR; bestStartC = startC;
+                                        bestTargetR = targetR; bestTargetC = targetC;
+                                    }
                                 }
                             }
                         }
@@ -481,21 +517,20 @@ void getBestMove(int board[8][8], int turn)
     {
         board[bestTargetR][bestTargetC] = board[bestStartR][bestStartC];
         board[bestStartR][bestStartC] = 0;
+        checkPromotion(board, bestTargetR, bestTargetC);
     }
 
 }
 
 void checkPromotion(int board[8][8], int targetR, int targetC)
 {
-    // Bielo pešiak na riadku 0 -> premena na bielu Dámu (9)
     if (board[targetR][targetC] == 1 && targetR == 0)
     {
-        board[targetR][targetC] = 9;
+        board[targetR][targetC] = 5;
     }
-    // Čierny pešiak na riadku 7 -> premena na čiernu Dámu (-9)
     else if (board[targetR][targetC] == -1 && targetR == 7)
     {
-        board[targetR][targetC] = -9;
+        board[targetR][targetC] = -5;
     }
 }
 

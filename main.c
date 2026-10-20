@@ -84,10 +84,9 @@ int main(void)
     while (!WindowShouldClose())    
     {
         if(turn == 1){
-            getBestMove(board, turn);
-            turn = -1;
 
-            /* if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
+            /*
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
             {
                 int clickedCol = GetMouseX() / rectangle_X;
                 int clickedRow = GetMouseY() / rectangle_X;
@@ -149,6 +148,8 @@ int main(void)
                                 selectedCol = -1;
                                 selectedRow = -1;
                             }
+                            
+            
 
                         }
                         else
@@ -159,8 +160,9 @@ int main(void)
                     }
                 }
             }
-        }
-        */
+            */
+                getBestMove(board, turn);
+                turn = -turn;
         }
         else if (turn == -1)
         {
