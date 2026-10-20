@@ -93,18 +93,34 @@ int main(void)
                 {
                     selectedRow = clickedRow;
                     selectedCol = clickedCol;
-
-
                 }
             }
             else
             {
-                board[clickedRow][clickedCol] = board[selectedRow][selectedCol];
+                if(selectedRow == clickedRow && selectedCol == clickedCol)
+                {
+                    selectedCol = -1;
+                    selectedRow = -1;
+                }
+                else if(
+                        (board[selectedRow][selectedCol] > 0 && board[clickedRow][clickedCol] > 0) ||
+                        (board[selectedRow][selectedCol] < 0 && board[clickedRow][clickedCol] < 0)
+                        )
+                {
+                    selectedRow = clickedRow;
+                    selectedCol = clickedCol;
+                }
+                else
+                {
+                    board[clickedRow][clickedCol] = board[selectedRow][selectedCol];
+                    board[selectedRow][selectedCol] = 0;
 
-                board[selectedRow][selectedCol] = 0;
+                    selectedRow = -1;
+                    selectedCol = -1;
+                }
 
-                selectedRow = -1;
-                selectedCol = -1;
+            
+                
             }
         }
 
