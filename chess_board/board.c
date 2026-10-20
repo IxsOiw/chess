@@ -479,7 +479,7 @@ void getBestMove(int board[8][8], int turn)
     if (bestStartR != -1 && bestStartC != -1)
     {
         board[bestTargetR][bestTargetC] = board[bestStartR][bestStartC];
-        board[bestStartR][bestStartR] = 0;
+        board[bestStartR][bestStartC] = 0;
     }
 
 }
