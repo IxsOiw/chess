@@ -41,5 +41,7 @@ int evaluateBoard(int board[8][8]);
 
 int minimax (int board[8][8], int depth, int isMaxi);
 void getBestMove(int board[8][8], int turn);
+
+void checkPromotion(int board[8][8], int targetR, int targetC);
 #endif // BOARD_H
 

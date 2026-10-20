@@ -84,8 +84,10 @@ int main(void)
     while (!WindowShouldClose())    
     {
         if(turn == 1){
+            getBestMove(board, turn);
+            turn = -1;
 
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
+            /* if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
             {
                 int clickedCol = GetMouseX() / rectangle_X;
                 int clickedRow = GetMouseY() / rectangle_X;
@@ -157,6 +159,8 @@ int main(void)
                     }
                 }
             }
+        }
+        */
         }
         else if (turn == -1)
         {

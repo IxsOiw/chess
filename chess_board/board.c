@@ -451,6 +451,7 @@ void getBestMove(int board[8][8], int turn)
                             }
                             tempBoard[targetR][targetC] = tempBoard[startR][startC];
                             tempBoard[startR][startC] = 0;
+                            checkPromotion(tempBoard, targetR, targetC);
                             
                             printf("tempBoard: [%d,%d] -> [%d,%d]... ", startR, startC, targetR, targetC);
 
@@ -484,4 +485,17 @@ void getBestMove(int board[8][8], int turn)
 
 }
 
+void checkPromotion(int board[8][8], int targetR, int targetC)
+{
+    // Bielo pešiak na riadku 0 -> premena na bielu Dámu (9)
+    if (board[targetR][targetC] == 1 && targetR == 0)
+    {
+        board[targetR][targetC] = 9;
+    }
+    // Čierny pešiak na riadku 7 -> premena na čiernu Dámu (-9)
+    else if (board[targetR][targetC] == -1 && targetR == 7)
+    {
+        board[targetR][targetC] = -9;
+    }
+}
 
