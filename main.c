@@ -156,6 +156,8 @@ int main(void)
                 }
             }
         }
+        char buf[32];
+        int value = evaluateBoard(board);
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -168,6 +170,8 @@ int main(void)
                 DrawRectangle(postionX[i][j], postionY[i][j], rectangle_X, rectangle_X, ((i + j) % 2 == 0)? BLUE : GREEN);
             }
         }
+        snprintf(buf, sizeof buf, "%d", value);
+        DrawText(buf, 20, 20,30,RED);
 
         if (selectedRow != -1 && selectedCol != -1)
         {

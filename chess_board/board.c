@@ -89,6 +89,7 @@ void drawBoardPieces(int board[8][8],
 
 int isValidMove(int board[8][8], int startR, int startC, int targetR, int targetC)
 {
+    
     int piece = board[startR][startC];
 
     int stepR = (targetR > startR) ? 1 : ((targetR < startR) ? -1 : 0);
@@ -253,6 +254,37 @@ int isSafe(int row, int col, int quen[])
 
     return 1;
 }
+int evaluateBoard(int board[8][8])
+{
+    int board_value = 0;
+
+    for(int i = 0; i < 8; i++)
+    {
+        for(int j = 0; j < 8; j++)
+        {
+            int piece = board[i][j];
+            
+            switch(piece) {
+                case -1: board_value -= 1; break;
+                case -2: board_value -= 5; break;
+                case -3: board_value -= 3;break;
+                case -4: board_value -= 3; break;
+                case -5: board_value -= 9; break;
+                case -6: board_value -= 90000; break;
+                
+                case 1: board_value += 1; break;
+                case 2: board_value += 5; break;
+                case 3: board_value += 3; break;
+                case 4: board_value += 3; break;
+                case 5: board_value += 9; break;
+                case 6: board_value += 90000; break;
+            }
+            
+            }
+        }
+    return board_value;
+}
+
 
 int quenSolved(int row, int quen[], int n, int PeacePositionX[8][8], int PeacePositionY[8][8], int postionX[8][8], int postionY[8][8], int rectangle_X)
 {

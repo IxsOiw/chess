@@ -36,4 +36,7 @@ int quenSolved(int row, int quen[], int n, int PeacePositionX[8][8], int PeacePo
 int isSafe(int row, int col, int quen[]);
 int isCheck(int board[8][8], int turn);
 void find_king(int board[8][8], int turn, int kingPos[2]);
+
+int evaluateBoard(int board[8][8]);
+
 #endif // BOARD_H
