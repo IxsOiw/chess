@@ -3,14 +3,14 @@
 #include "board.h"
 
 
-void createBoardCoardination(int (*postionX)[8], int (*postionY)[8],int (*countPostion)[8], int *startBoardX, int *startBoardY, int *cout)
+void createBoardCoardination(int (*postionX)[8], int (*postionY)[8],int (*countPostion)[8], int *startBoardX, int *startBoardY, int *cout, int *rectangle_X, int *rectangle_Y)
 {
     for(int i = 0; i < 8; i++)
     {
         for(int j = 0; j < 8; j++)
         {
             postionX[i][j] = *startBoardX;
-            *startBoardX += 50;
+            *startBoardX += *rectangle_X;
 
             postionY[i][j] = *startBoardY;
 
@@ -19,7 +19,7 @@ void createBoardCoardination(int (*postionX)[8], int (*postionY)[8],int (*countP
             
         }
         *startBoardX = 0;
-        *startBoardY -= 50;
+        *startBoardY -= *rectangle_Y;
     }
 
 }
