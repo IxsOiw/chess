@@ -83,79 +83,87 @@ int main(void)
 
     while (!WindowShouldClose())    
     {
+        if(turn == 1){
 
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
-        {
-            int clickedCol = GetMouseX() / rectangle_X;
-            int clickedRow = GetMouseY() / rectangle_X;
-
-            if (selectedRow == -1)
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
             {
+                int clickedCol = GetMouseX() / rectangle_X;
+                int clickedRow = GetMouseY() / rectangle_X;
 
-                if (board[clickedRow][clickedCol] != 0 && (board[clickedRow][clickedCol] * turn > 0))
-                        {
-                            selectedRow = clickedRow;
-                            selectedCol = clickedCol;
-                        }
-            }
-            else
-            {
-                if(selectedRow == clickedRow && selectedCol == clickedCol)
+                if (selectedRow == -1)
                 {
-                    selectedCol = -1;
-                    selectedRow = -1;
-                }
-                else if(
-                        (board[selectedRow][selectedCol] > 0 && board[clickedRow][clickedCol] > 0) ||
-                        (board[selectedRow][selectedCol] < 0 && board[clickedRow][clickedCol] < 0)
-                        )
-                {
-                    selectedRow = clickedRow;
-                    selectedCol = clickedCol;
+
+                    if (board[clickedRow][clickedCol] != 0 && (board[clickedRow][clickedCol] * turn > 0))
+                            {
+                                selectedRow = clickedRow;
+                                selectedCol = clickedCol;
+                            }
                 }
                 else
                 {
-                    if (isValidMove(board, selectedRow, selectedCol, clickedRow, clickedCol))
+                    if(selectedRow == clickedRow && selectedCol == clickedCol)
                     {
-
-                        int tempBoard[8][8];
-
-                        for (int r = 0; r < 8; r++)
+                        selectedCol = -1;
+                        selectedRow = -1;
+                    }
+                    else if(
+                            (board[selectedRow][selectedCol] > 0 && board[clickedRow][clickedCol] > 0) ||
+                            (board[selectedRow][selectedCol] < 0 && board[clickedRow][clickedCol] < 0)
+                            )
+                    {
+                        selectedRow = clickedRow;
+                        selectedCol = clickedCol;
+                    }
+                    else
+                    {
+                        if (isValidMove(board, selectedRow, selectedCol, clickedRow, clickedCol))
                         {
-                            for (int c = 0; c < 8; c++)
+
+                            int tempBoard[8][8];
+
+                            for (int r = 0; r < 8; r++)
                             {
-                                tempBoard[r][c] = board[r][c];
+                                for (int c = 0; c < 8; c++)
+                                {
+                                    tempBoard[r][c] = board[r][c];
+                                }
                             }
-                        }
 
-                            tempBoard[clickedRow][clickedCol] = tempBoard[selectedRow][selectedCol];
-                            tempBoard[selectedRow][selectedCol] = 0;
+                                tempBoard[clickedRow][clickedCol] = tempBoard[selectedRow][selectedCol];
+                                tempBoard[selectedRow][selectedCol] = 0;
 
-                        if(!isCheck(tempBoard,turn))
-                        {
-                            board[clickedRow][clickedCol] = board[selectedRow][selectedCol];
-                            board[selectedRow][selectedCol] = 0;
+                            if(!isCheck(tempBoard,turn))
+                            {
+                                board[clickedRow][clickedCol] = board[selectedRow][selectedCol];
+                                board[selectedRow][selectedCol] = 0;
 
-                            selectedRow = -1;
-                            selectedCol = -1;
+                                selectedRow = -1;
+                                selectedCol = -1;
 
-                            turn = -turn;
+                                turn = -turn;
+                            }
+                            else
+                            {
+                                selectedCol = -1;
+                                selectedRow = -1;
+                            }
+
                         }
                         else
                         {
                             selectedCol = -1;
                             selectedRow = -1;
                         }
-
-                    }
-                    else
-                    {
-                        selectedCol = -1;
-                        selectedRow = -1;
                     }
                 }
             }
         }
+        else if (turn == -1)
+        {
+            getBestMove(board, turn);
+            turn = 1;
+        }
+
         char buf[32];
         int value = evaluateBoard(board);
 

@@ -39,4 +39,7 @@ void find_king(int board[8][8], int turn, int kingPos[2]);
 
 int evaluateBoard(int board[8][8]);
 
+int minimax (int board[8][8], int depth, int isMaxi);
+void getBestMove(int board[8][8], int turn);
 #endif // BOARD_H
+

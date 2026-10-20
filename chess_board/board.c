@@ -339,3 +339,149 @@ int quenSolved(int row, int quen[], int n, int PeacePositionX[8][8], int PeacePo
     return 0;
 }
 
+int minimax(int board[8][8], int depth, int isMaxi)
+{
+    if (depth == 0)
+    {
+        return evaluateBoard(board);
+    }
+
+    int turn = isMaxi ? 1 : -1;
+
+    if (isMaxi)     
+    {
+        int maxEval = -100000;
+
+        for (int startR = 0; startR < 8; startR++) {
+            for (int startC = 0; startC < 8; startC++) {
+                if (board[startR][startC] * turn > 0) {
+                    for (int targetR = 0; targetR < 8; targetR++) {
+                        for (int targetC = 0; targetC < 8; targetC++) {
+                            
+                            if (isValidMove(board, startR, startC, targetR, targetC)) {
+                                int tempBoard[8][8];
+                                
+                                for (int r = 0; r < 8; r++)
+                                    for (int c = 0; c < 8; c++)
+                                        tempBoard[r][c] = board[r][c];
+
+                                tempBoard[targetR][targetC] = tempBoard[startR][startC];
+                                tempBoard[startR][startC] = 0;
+
+                                if (!isCheck(tempBoard, turn)) {
+                                    int eval = minimax(tempBoard, depth - 1, 0); 
+                                    if (eval > maxEval) maxEval = eval;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        return maxEval;
+    }
+    else  
+    {
+        int minEval = 100000;
+
+        for (int startR = 0; startR < 8; startR++) {
+            for (int startC = 0; startC < 8; startC++) {
+                if (board[startR][startC] * turn > 0) {
+                    for (int targetR = 0; targetR < 8; targetR++) {
+                        for (int targetC = 0; targetC < 8; targetC++) {
+                            
+                            if (isValidMove(board, startR, startC, targetR, targetC)) {
+                                int tempBoard[8][8];
+                                
+                                for (int r = 0; r < 8; r++)
+                                    for (int c = 0; c < 8; c++)
+                                        tempBoard[r][c] = board[r][c];
+
+                                tempBoard[targetR][targetC] = tempBoard[startR][startC];
+                                tempBoard[startR][startC] = 0;
+
+                                if (!isCheck(tempBoard, turn)) {
+                                    int eval = minimax(tempBoard, depth - 1, 1);
+                                    if (eval < minEval) minEval = eval;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        return minEval;
+    }
+}
+
+void getBestMove(int board[8][8], int turn)
+{
+    int maxDepth = 1;
+
+    int bestScore = 10000;
+    int bestStartR = -1;
+    int bestStartC = -1;
+    int bestTargetR = -1;
+    int bestTargetC = -1;
+    printf("AI -> best move\n");
+
+    for(int startR = 0; startR < 8; startR++)
+    {
+        for (int startC = 0; startC < 8; startC++)
+        {
+            if(board[startR][startC] * turn > 0)
+            {
+                for(int targetR = 0; targetR < 8; targetR++)
+                {
+                    for(int targetC = 0; targetC < 8; targetC++)
+                    {
+                       if(isValidMove(board, startR, startC,targetR, targetC))
+                       {
+                            int tempBoard[8][8];
+
+                            for (int r = 0; r < 8; r++)
+                            {
+                                for (int c = 0; c < 8; c++)
+                                {
+                                    tempBoard[r][c] = board[r][c];
+                                    
+                                }
+                            }
+                            tempBoard[targetR][targetC] = tempBoard[startR][startC];
+                            tempBoard[startR][startC] = 0;
+                            
+                            printf("tempBoard: [%d,%d] -> [%d,%d]... ", startR, startC, targetR, targetC);
+
+                            if (!isCheck(tempBoard, turn))
+                            {
+                                int score = minimax(tempBoard, maxDepth - 1, 0);
+
+                                if (score < bestScore)
+                                {
+                                    bestScore = score;
+                                    bestStartR = startR;
+                                    bestStartC = startC;
+                                    bestTargetR = targetR;
+                                    bestTargetC = targetC;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    printf("best move: [%d,%d] -> [%d,%d] score: %d\n", 
+            bestStartR, bestStartC, bestTargetR, bestTargetC, bestScore);
+
+    if (bestStartR != -1 && bestStartC != -1)
+    {
+        board[bestTargetR][bestTargetC] = board[bestStartR][bestStartC];
+        board[bestStartR][bestStartR] = 0;
+    }
+
+}
+
+
