@@ -87,6 +87,154 @@ void drawBoardPieces(int board[8][8],
     }
 }
 
+int isValidMove(int board[8][8], int startR, int startC, int targetR, int targetC)
+{
+    int piece = board[startR][startC];
+
+    int stepR = (targetR > startR) ? 1 : ((targetR < startR) ? -1 : 0);
+    int stepC = (targetC > startC) ? 1 : ((targetC < startC) ? -1 : 0);
+
+    int pieceType = abs(piece); 
+
+    switch (pieceType)
+    {
+        case 1:
+        {
+
+            int startRowPawn = (piece > 0) ? 6 : 1; 
+            int direction = (piece > 0) ? -1 : 1; 
+
+            if (startC == targetC && targetR == startR + direction && board[targetR][targetC] == 0)
+            {
+                return 1;
+            }
+
+            if (startC == targetC && startR == startRowPawn && targetR == startR + (2 * direction) &&
+                board[startR + direction][startC] == 0 && board[targetR][targetC] == 0)
+            {
+                return 1;
+            }
+
+            if (abs(startC - targetC) == 1 && targetR == startR + direction && board[targetR][targetC] != 0)
+            {
+                return 1;
+            }
+
+            break;
+        }
+
+        case 2:
+            if (startR == targetR || startC == targetC) 
+            {
+                int r = startR + stepR;
+                int c = startC + stepC;
+                while(r != targetR || c != targetC)
+                    if(board[r][c] != 0)
+                    {
+                      return 0;
+                    }
+                    else
+                    {
+                        r += stepR;
+                        c += stepC;
+                    }
+                return 1;
+            }
+            break;
+
+        case 3:             
+            if (abs(targetR - startR) * abs(targetC - startC) == 2)
+            {
+                return 1;
+
+            };
+            break;
+
+        case 4:
+            if (abs(targetR - startR) == abs(targetC - startC))
+            {
+
+                int r = startR + stepR;
+                int c = startC + stepC;
+
+                while(r != targetR || c != targetC)
+                {
+                    if(board[r][c] != 0)
+                    {
+                        return 0;
+                    }
+                    r += stepR;
+                    c += stepC;
+                }
+                return 1;
+            }
+            break;
+
+        case 5:
+            if ((startR == targetR || startC == targetC) || 
+                (abs(targetR - startR) == abs(targetC - startC)))
+            {
+                int r = startR + stepR;
+                int c = startC + stepC;
+
+                while(r != targetR || c != targetC)
+                {
+                    if(board[r][c] != 0)
+                    {
+                        return 0;
+                    }
+                    r += stepR;
+                    c += stepC;
+                }
+                return 1;
+            }
+            break;
+
+        case 6: 
+            if (abs(targetR - startR) <= 1 && abs(targetC - startC) <= 1) return 1;
+            break;
+    }
+    return 0;
+}
+   
+void find_king(int board[8][8], int turn, int kingPos[2])
+{
+    int king = (turn > 0) ? 6 : -6;
+    for(int r = 0; r < 8; r++)
+    {
+        for(int c = 0; c < 8; c++)
+        {
+            if(board[r][c] == king)
+            {
+                kingPos[0] = r;
+                kingPos[1] = c;
+                return;
+            }
+        }
+    }
+}
+
+int isCheck(int board[8][8], int turn)
+{
+    int kingPos[2];
+    find_king(board, turn, kingPos);
+
+    for(int r = 0; r < 8; r++)
+    {
+        for(int c = 0; c < 8; c++)
+        {
+            if(board[r][c] * turn < 0)
+            {
+                if (isValidMove(board, r, c, kingPos[0],kingPos[1]))
+                {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 
 int isSafe(int row, int col, int quen[])
 {

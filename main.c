@@ -38,6 +38,9 @@ int main(void)
 
     int selectedCol = -1;
     int selectedRow = -1;
+
+    int turn = 1;
+    int kingPos[2] = {0};
  
 
     int quen[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
@@ -86,14 +89,14 @@ int main(void)
             int clickedCol = GetMouseX() / rectangle_X;
             int clickedRow = GetMouseY() / rectangle_X;
 
-
             if (selectedRow == -1)
             {
-                if (board[clickedRow][clickedCol] != 0)
-                {
-                    selectedRow = clickedRow;
-                    selectedCol = clickedCol;
-                }
+
+                if (board[clickedRow][clickedCol] != 0 && (board[clickedRow][clickedCol] * turn > 0))
+                        {
+                            selectedRow = clickedRow;
+                            selectedCol = clickedCol;
+                        }
             }
             else
             {
@@ -112,20 +115,51 @@ int main(void)
                 }
                 else
                 {
-                    board[clickedRow][clickedCol] = board[selectedRow][selectedCol];
-                    board[selectedRow][selectedCol] = 0;
+                    if (isValidMove(board, selectedRow, selectedCol, clickedRow, clickedCol))
+                    {
 
-                    selectedRow = -1;
-                    selectedCol = -1;
+                        int tempBoard[8][8];
+
+                        for (int r = 0; r < 8; r++)
+                        {
+                            for (int c = 0; c < 8; c++)
+                            {
+                                tempBoard[r][c] = board[r][c];
+                            }
+                        }
+
+                            tempBoard[clickedRow][clickedCol] = tempBoard[selectedRow][selectedCol];
+                            tempBoard[selectedRow][selectedCol] = 0;
+
+                        if(!isCheck(tempBoard,turn))
+                        {
+                            board[clickedRow][clickedCol] = board[selectedRow][selectedCol];
+                            board[selectedRow][selectedCol] = 0;
+
+                            selectedRow = -1;
+                            selectedCol = -1;
+
+                            turn = -turn;
+                        }
+                        else
+                        {
+                            selectedCol = -1;
+                            selectedRow = -1;
+                        }
+
+                    }
+                    else
+                    {
+                        selectedCol = -1;
+                        selectedRow = -1;
+                    }
                 }
-
-            
-                
             }
         }
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
 
         for(int i = 0; i < 8; i++)
         {
@@ -138,6 +172,13 @@ int main(void)
         if (selectedRow != -1 && selectedCol != -1)
         {
             DrawRectangle(postionX[selectedRow][selectedCol], postionY[selectedRow][selectedCol], rectangle_X, rectangle_X, YELLOW);
+        }
+
+        if (isCheck(board, turn))
+        {
+            find_king(board, turn, kingPos);
+            
+            DrawRectangle(postionX[kingPos[0]][kingPos[1]], postionY[kingPos[0]][kingPos[1]], rectangle_X, rectangle_X, RED);
         }
 
         drawBoardPieces(board,
